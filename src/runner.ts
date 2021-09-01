@@ -131,6 +131,12 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 		}
 	}
 
+	// Grab a connection to parachain node 9988
+	let paraChainApi: ApiPromise = await connect(
+		config.parachains[0].nodes[0].wsPort,
+		{}
+	);
+
 	// Then launch each simple parachain (e.g. an adder-collator)
 	if (config.simpleParachains) {
 		for (const simpleParachain of config.simpleParachains) {
@@ -177,7 +183,7 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 	}
 
 	// We don't need the PolkadotJs API anymore
-	await relayChainApi.disconnect();
+	// await relayChainApi.disconnect();
 
 	// Here we beging hacking.
 	// We want to cause a multi-block re-org on the relay chain
@@ -186,7 +192,16 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 	// Based on our config, we know that we have the following nodes:
 	// alice, bob, charlie, dave, 9988, 9989
 	
-	// TODO wait until the parachain has authored a few blocks
+	// Wait until the parachain has authored a few blocks
+	// cribbed from https://polkadot.js.org/docs/api/examples/promise/listen-to-blocks
+	const unsubscribe = await paraChainApi.rpc.chain.subscribeNewHeads((header) => {
+		let paraHeight = header.number.toNumber();
+		console.log(`Parachain is at block: #${paraHeight}`);
+		if (paraHeight > 5) {
+			console.log("Done waiting for para liveness")
+			unsubscribe();
+		}  
+	});
 
 	// TODO Kill half the nodes (charlie, dave, 9989)
 	// This drops the finality voters below 2/3 which will stop finality
