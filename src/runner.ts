@@ -179,6 +179,37 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 	// We don't need the PolkadotJs API anymore
 	await relayChainApi.disconnect();
 
+	// Here we beging hacking.
+	// We want to cause a multi-block re-org on the relay chain
+	// which will imply a reorg on the parachain also.
+	//
+	// Based on our config, we know that we have the following nodes:
+	// alice, bob, charlie, dave, 9988, 9989
+	
+	// TODO wait until the parachain has authored a few blocks
+
+	// TODO Kill half the nodes (charlie, dave, 9989)
+	// This drops the finality voters below 2/3 which will stop finality
+	// and also prevents the offline-nodes from syncing the chain
+
+	// TODO wait for a few more parablocks to be authored
+
+	// TODO Kill remaining nodes (Alice, bob, 9988)
+	// This will stall the entire chain
+
+	// TODO bring first-killed nodes back online (charlie, dave, 9989)
+	// This will cause them to pick up where they left off, shortly after the para became live
+	// We are still below 2/3 so the new histories that they author will also be unfinalized.
+
+	// TODO wait for the new fork length to exceed the old fork length (by at least on para block)
+
+	// TODO restart all all nodes.
+	// This should cause the second-killed nodes (Alice, Bob, 9988)
+	// to re-org to the more-recently-authored longer chain.
+	// With all finality voters back online, the newer, longer chain should quickly becom finalized.
+
+	// TODO check which nodes know tell us about which blocks.
+
 	console.log("🚀 POLKADOT LAUNCH COMPLETE 🚀");
 }
 
