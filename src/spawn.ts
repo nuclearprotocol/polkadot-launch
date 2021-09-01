@@ -8,7 +8,7 @@ import fs from "fs";
 
 // This tracks all the processes that we spawn from this file.
 // Used to clean up processes when exiting this program.
-const p: { [key: string]: ChildProcessWithoutNullStreams } = {};
+export const p: { [key: string]: ChildProcessWithoutNullStreams } = {};
 
 const execFile = util.promisify(ex);
 

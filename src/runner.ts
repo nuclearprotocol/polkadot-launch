@@ -9,6 +9,7 @@ import {
 	exportGenesisState,
 	startSimpleCollator,
 	getParachainIdFromSpec,
+	p,
 } from "./spawn";
 import { connect, registerParachain, setBalance } from "./rpc";
 import { checkConfig } from "./check";
@@ -203,9 +204,12 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 		}  
 	});
 
-	// TODO Kill half the nodes (charlie, dave, 9989)
+	// Kill half the nodes (charlie, dave, 9989)
 	// This drops the finality voters below 2/3 which will stop finality
 	// and also prevents the offline-nodes from syncing the chain
+	p["charlie"].kill();
+	p["dave"].kill();
+	p["9989"].kill();
 
 	// TODO wait for a few more parablocks to be authored
 
