@@ -15,7 +15,7 @@
 		"para-test-no-ci": "mocha -r ts-node/register 'test/tests-no-ci/**/test-*.ts'"
 	},
 	"dependencies": {
-		"@polkadot/api": "^6.10.3",
+		"@polkadot/api": "^7.6.1",
 		"@polkadot/keyring": "^8.0.5",
 		"@polkadot/types": "^6.10.3",
 		"@polkadot/util": "^8.0.5",
